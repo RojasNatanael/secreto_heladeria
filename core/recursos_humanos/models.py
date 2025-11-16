@@ -2,8 +2,12 @@ from django.db import models
 from django.db.models import SET_NULL, FloatField, IntegerField
 from django.contrib.auth.models import User 
 from django.core.validators import MinValueValidator
-# Create your models here.
+from django.core.exceptions import ValidationError
+from django.db.models.fields import validators
+from rut_chile import rut_chile
 
+
+#======TEXT CHOICES======#
 class TiposContrato(models.TextChoices):
     INDEFINIDO = "indefinido", "Contrato indefinido"
     PLAZO_FIJO = "plazo_fijo", "Contrato a plazo fijo"
@@ -26,12 +30,23 @@ class TipoSalud(models.TextChoices):
     FONASA = "fonasa", "Fonasa"
     ISAPRE = "isapre", "Isapre"
 
+#======VALIDADORES======#
+def validar_rut(rut):
+    rut_limpio = rut.replace(".", "").replace("-", "").upper()
+
+    if not rut_chile.is_valid_rut(rut_limpio):
+        raise ValidationError("El RUT ingresado no es válido.")
 
 
+#======MODELOS======#
 
 class Departamento(models.Model):
     nombre = models.CharField(max_length = 100)
     desc = models.TextField(max_length = 400)
+
+    def __str__(self):
+        return f"{self.nombre}"
+
     class Meta:
         db_table = 'cpt_departamento'
 
@@ -40,6 +55,11 @@ class Contacto(models.Model):
     telefono1 = models.CharField(max_length=20)
     telefono2 = models.CharField(max_length=20, null=True,blank=True)
     correo = models.EmailField(max_length=255)
+    
+
+    def __str__(self):
+        return f"Contacto {self.correo}"
+
     class Meta:
         db_table = 'cpt_contacto'
 
@@ -50,11 +70,22 @@ class InformacionPersonal(models.Model):
     apellido = models.CharField(max_length=90)
     segundo_apellido = models.CharField(max_length=90,null=True,blank=True)
     fecha_nacimiento = models.DateField()
-    run = models.CharField(max_length=10, unique=True)
+    run = models.CharField(max_length=12, unique=True, validators = [validar_rut])
     estado_civil = models.CharField(max_length=50, choices=EstadoCivil.choices, default=EstadoCivil.SOLTERO)
     nacionalidad = models.CharField(max_length = 100)
     genero = models.CharField(max_length = 50, choices=Genero.choices, default=Genero.OTRO)
-    contacto = models.ForeignKey(Contacto, on_delete=SET_NULL,null=True, blank=True, related_name='info')
+    contacto = models.OneToOneField("Contacto", on_delete=SET_NULL,null=True, blank=True, related_name='info')
+
+    def __str__(self):
+        return f"Informacion Personal {self.nombre} {self.apellido}"
+
+
+#======PARA LA VALIDACION DE RUT SE ESTA USANDO UNA LIBRERIA EXTERNA======#
+    def clean(self):
+        if self.run:
+            rut = self.run.replace(".", "").replace("-", "").upper()
+            self.run = rut_chile.format_capitalized_rut_without_dots(rut)
+
     class Meta:
         db_table = 'cpt_informacion_personal'
 
@@ -66,14 +97,24 @@ class Asistencia(models.Model):
     horas_ausencia = models.FloatField()
     hora_llegada = models.DateTimeField()
     observaciones = models.TextField(max_length=200)
+    empleado = models.ForeignKey("Empleado", on_delete=models.CASCADE, related_name='asistencias')
+
+
+    def __str__(self):
+        return f"Asistencia {self.fecha} {self.empleado.nombre}"
+
     class Meta:
         db_table = 'cpt_asistencia'
 
 
 class Remuneracion(models.Model):
-    monto = IntegerField()
-    fecha = DateField()
-    observaciones = TextField(max_length=500)
+    monto = models.IntegerField()
+    fecha = models.DateField()
+    observaciones = models.TextField(max_length=500)
+    empleado = models.ForeignKey("Empleado", on_delete=models.CASCADE,related_name='remuneraciones')
+
+    def __str__(self):
+        return f"Remuneracion {self.fecha} {self.empleado.nombre}"
 
     class Meta:
         db_table = 'cpt_remuneracion'
@@ -83,6 +124,9 @@ class Salud(models.Model):
     nombre_isapre = models.CharField(max_length=90, null=True,blank=True)
     plan = models.CharField(max_length=90, null=True,blank=True)
     cotizacion_porcentaje = models.FloatField(default=7.0, validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return f"{self.tipo} {self.cotizacion_porcentaje}%"
 
     class Meta:
         db_table = 'cpt_salud'
@@ -94,6 +138,9 @@ class Afp(models.Model):
     porcentaje_cotizacion = models.FloatField(validators=[MinValueValidator(0)])
     porcentaje_apv = models.FloatField(default=0, validators=[MinValueValidator(0)])
     observaciones = models.TextField(max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.nombre}"
 
     class Meta:
         db_table = 'cpt_afp'
@@ -107,11 +154,13 @@ class Empleado(models.Model):
     salario_base = models.IntegerField(validators=[MinValueValidator(1, message='Salario no puede ser menor a 0')])
     contrato = models.FileField(upload_to='contratos/')
     tipo_contrato = models.CharField(max_length=50,choices=TiposContrato.choices, default=TiposContrato.INDEFINIDO,)
-    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL,null=True,blank=True,related_name='empleados') 
-    informacion_personal = models.ForeignKey(InformacionPersonal, on_delete=models.SET_NULL,null=True,blank=True, related_name='empleados') 
-    asistencia = models.ForeignKey(Asistencia, on_delete=SET_NULL,null=True, blank=True, related_name='empleados')
-    salud = models.ForeignKey(Salud, on_delete=models.SET_NULL, null=True, blank=True, related_name='empleados')
-    afp = models.ForeignKey(Afp, on_delete=models.SET_NULL, null=True, blank=True, related_name='empleados')
+    departamento = models.ForeignKey("Departamento", on_delete=models.SET_NULL,null=True,blank=True,related_name='empleados') 
+    informacion_personal = models.OneToOneField("InformacionPersonal", on_delete=models.SET_NULL,null=True,blank=True, related_name='empleado') 
+    salud = models.ForeignKey("Salud", on_delete=models.SET_NULL, null=True, blank=True, related_name='empleados')
+    afp = models.ForeignKey("Afp", on_delete=models.SET_NULL, null=True, blank=True, related_name='empleados')
+
+    def __str__(self):
+        return f"{self.informacion_personal.nombre} {self.informacion_personal.apellido}"
 
     class Meta:
         db_table = 'cpt_empleado'
