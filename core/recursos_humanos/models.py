@@ -68,13 +68,13 @@ class InformacionPersonal(models.Model):
     nombre = models.CharField(max_length=90)
     segundo_nombre = models.CharField(max_length=90,null=True, blank=True)
     apellido = models.CharField(max_length=90)
-    segundo_apellido = models.CharField(max_length=90,null=True,blank=True)
+    segundo_apellido = models.CharField(max_length=90)
     fecha_nacimiento = models.DateField()
     run = models.CharField(max_length=12, unique=True, validators = [validar_rut])
     estado_civil = models.CharField(max_length=50, choices=EstadoCivil.choices, default=EstadoCivil.SOLTERO)
     nacionalidad = models.CharField(max_length = 100)
     genero = models.CharField(max_length = 50, choices=Genero.choices, default=Genero.OTRO)
-    contacto = models.OneToOneField("Contacto", on_delete=SET_NULL,null=True, blank=True, related_name='info')
+    contacto = models.OneToOneField("Contacto", on_delete=models.PROTECT, related_name='info')
 
     def __str__(self):
         return f"Informacion Personal {self.nombre} {self.apellido}"
@@ -95,29 +95,49 @@ class Asistencia(models.Model):
     horas_trabajadas = models.FloatField()
     horas_extra = models.FloatField()
     horas_ausencia = models.FloatField()
-    hora_llegada = models.DateTimeField()
+    hora_llegada = models.TimeField()
     observaciones = models.TextField(max_length=200)
-    empleado = models.ForeignKey("Empleado", on_delete=models.CASCADE, related_name='asistencias')
+    empleado = models.ForeignKey("Empleado", on_delete=models.PROTECT, related_name='asistencias')
 
 
     def __str__(self):
-        return f"Asistencia {self.fecha} {self.empleado.nombre}"
+        return f"Asistencia {self.fecha} {self.empleado.informacion_personal.nombre}"
 
     class Meta:
         db_table = 'cpt_asistencia'
 
 
 class Remuneracion(models.Model):
-    monto = models.IntegerField()
+    monto = models.IntegerField(null=True, blank=True)
     fecha = models.DateField()
     observaciones = models.TextField(max_length=500)
-    empleado = models.ForeignKey("Empleado", on_delete=models.CASCADE,related_name='remuneraciones')
+    empleado = models.ForeignKey("Empleado", on_delete=models.PROTECT, related_name='remuneraciones')
 
-    def __str__(self):
-        return f"Remuneracion {self.fecha} {self.empleado.nombre}"
+    def calcular_monto(self):
+        empleado = self.empleado
+        base = empleado.salario_base
+
+        afp_pct = empleado.afp.porcentaje_cotizacion / 100
+        afp_desc = base * afp_pct
+
+        salud_pct = empleado.salud.cotizacion_porcentaje / 100
+        salud_desc = base * salud_pct
+
+        total = base - afp_desc - salud_desc
+        return int(total)
+
+    def save(self, *args, **kwargs):
+#======SOLO CALCULA MONTO SI CAMPO SE DEJA VACIO=======#
+        if not self.monto or self.monto <= 0:
+            self.monto = self.calcular_monto()
+
+        super().save(*args, **kwargs)
 
     class Meta:
         db_table = 'cpt_remuneracion'
+
+
+
 
 class Salud(models.Model):
     tipo = models.CharField(max_length=20, choices=TipoSalud.choices, default=TipoSalud.FONASA)
@@ -150,17 +170,34 @@ class Afp(models.Model):
 
 class Empleado(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    fecha_ingreso = models.DateField(null = True, blank = True)
+    fecha_ingreso = models.DateField()
     salario_base = models.IntegerField(validators=[MinValueValidator(1, message='Salario no puede ser menor a 0')])
     contrato = models.FileField(upload_to='contratos/')
     tipo_contrato = models.CharField(max_length=50,choices=TiposContrato.choices, default=TiposContrato.INDEFINIDO,)
-    departamento = models.ForeignKey("Departamento", on_delete=models.SET_NULL,null=True,blank=True,related_name='empleados') 
-    informacion_personal = models.OneToOneField("InformacionPersonal", on_delete=models.SET_NULL,null=True,blank=True, related_name='empleado') 
-    salud = models.ForeignKey("Salud", on_delete=models.SET_NULL, null=True, blank=True, related_name='empleados')
-    afp = models.ForeignKey("Afp", on_delete=models.SET_NULL, null=True, blank=True, related_name='empleados')
+    departamento = models.ForeignKey("Departamento", on_delete=models.PROTECT,related_name='empleados') 
+    informacion_personal = models.OneToOneField("InformacionPersonal", on_delete=models.PROTECT, related_name='empleado') 
+    salud = models.ForeignKey("Salud", on_delete=models.PROTECT, related_name='empleados')
+    afp = models.ForeignKey("Afp", on_delete=models.PROTECT, related_name='empleados')
 
     def __str__(self):
         return f"{self.informacion_personal.nombre} {self.informacion_personal.apellido}"
 
     class Meta:
         db_table = 'cpt_empleado'
+
+class Marca(models.Model):
+    nombre = models.CharField(max_length=90)
+
+    def __str__(self):
+        return f"{self.nombre}"
+    
+
+class Inzumo(models.Model):
+    nombre = models.CharField(max_length=90)
+    descripcion = models.TextField(max_length=90)
+    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.marca}"
+
+

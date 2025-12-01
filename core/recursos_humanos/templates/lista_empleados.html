@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Empleados{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Listado de Empleados</h1>
+
+<form method="GET" class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control"
+               placeholder="Buscar por nombre, email o RUT"
+               value="{{ search }}">
+    </div>
+
+    <div class="col-md-2">
+        <select name="departamento" class="form-select">
+            <option value="">Departamento</option>
+            {% for d in departamentos %}
+                <option value="{{ d.id }}" {% if selected_departamento == d.id|stringformat:"s" %}selected{% endif %}>
+                    {{ d.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="afp" class="form-select">
+            <option value="">AFP</option>
+            {% for a in afps %}
+                <option value="{{ a.id }}" {% if selected_afp == a.id|stringformat:"s" %}selected{% endif %}>
+                    {{ a.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="salud" class="form-select">
+            <option value="">Salud</option>
+            {% for s in saluds %}
+                <option value="{{ s.id }}" {% if selected_salud == s.id|stringformat:"s" %}selected{% endif %}>
+                    {{ s.tipo }} {# Changed from s.nombre to s.tipo #}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filtrar</button>
+    </div>
+
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>RUT</th>
+        <th>Email</th>
+        <th>Departamento</th>
+        <th>AFP</th>
+        <th>Salud</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for e in empleados %}
+        <tr>
+            <td>{{ e.informacion_personal.nombre }} {{ e.informacion_personal.apellido }}</td>
+            <td>{{ e.informacion_personal.run }}</td>
+            <td>{{ e.informacion_personal.contacto.correo }}</td>
+            <td>{{ e.departamento.nombre }}</td>
+            <td>{{ e.afp.nombre }}</td>
+            <td>{{ e.salud.tipo }}</td>
+            <td>
+		<a href="{% url 'editar_empleado' e.id %}" class="btn btn-sm btn-warning">Editar</a>
+
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">
+                No se encontraron registros
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

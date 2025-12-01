@@ -1,22 +1,36 @@
-"""
-URL configuration for core project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
+from recursos_humanos.views import registrar_empleado, registrar_afp, registrar_departamento,registrar_asistencia,registrar_remuneracion,registrar_salud, dashboard, registrar_inzumo
 
+from django.contrib.auth import views as auth_views
+
+from recursos_humanos.lista_empleados import lista_empleados
+from recursos_humanos.editar_empleado import editar_empleado
+from recursos_humanos.lista_remuneraciones import lista_remuneraciones
+from recursos_humanos.lista_asistencia import lista_asistencia
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', lista_empleados, name='lista_empleados'),
+
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+
+    path('empleado/registrar', registrar_empleado, name='registrar_empleado'),
+    path('afp/registrar', registrar_afp, name='registrar_afp'),
+    path('departamento/registrar', registrar_departamento, name='registrar_departamento'),
+    path('asistencia/registrar', registrar_asistencia, name='registrar_asistencia'),
+    path('remuneracion/registrar', registrar_remuneracion, name='registrar_remuneracion'),
+    path('salud/registrar', registrar_salud, name='registrar_salud'),
+    path('inzumo/registrar', registrar_inzumo, name='registrar_inzumo'),
+
+
+    path('empleado/editar/<int:empleado_id>/', editar_empleado, name='editar_empleado'),
+
+    path('remuneracion/', lista_remuneraciones, name='lista_remuneraciones'),
+
+    path('asistencia/', lista_asistencia, name='lista_asistencia'),
+    path('dashboard/', dashboard, name='dashboard'),
+
 ]

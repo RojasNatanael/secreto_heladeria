@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar AFP{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <form method="post" class="">
+        {% csrf_token %}
+
+        <h3 class="mb-3">AFP</h3>
+
+        <div class="card card-body mb-3">
+            {{ afp_form.as_p }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Registrar AFP
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

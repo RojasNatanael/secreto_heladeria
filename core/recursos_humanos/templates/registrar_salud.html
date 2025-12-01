@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Salud{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <form method="post" class="">
+        {% csrf_token %}
+
+        <h3 class="mb-3">Salud</h3>
+
+        <div class="card card-body mb-3">
+            {{ salud_form.as_p }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Registrar Seguro
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

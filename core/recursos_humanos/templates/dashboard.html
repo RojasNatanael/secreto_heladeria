@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h1 class="mb-4 text-primary">Administracion Recursos Humanos</h1>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <a href="{% url 'registrar_empleado' %}" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Registrar Empleado</h5>
+                        <p class="card-text">Crear un nuevo empleado con información personal, contacto y cuenta.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Registrar AFP -->
+        <div class="col-md-4">
+            <a href="{% url 'registrar_afp' %}" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Registrar AFP</h5>
+                        <p class="card-text">Agregar una nueva AFP para asignarla a los empleados.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Registrar Remuneración -->
+        <div class="col-md-4">
+            <a href="{% url 'registrar_remuneracion' %}" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Registrar Remuneración</h5>
+                        <p class="card-text">Registrar el monto de remuneración asociado a un empleado.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Registrar Asistencia -->
+        <div class="col-md-4">
+            <a href="{% url 'registrar_asistencia' %}" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Registrar Asistencia</h5>
+                        <p class="card-text">Controlar los días trabajados, atrasos y ausencias.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Registrar Departamento -->
+        <div class="col-md-4">
+            <a href="{% url 'registrar_departamento' %}" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Registrar Departamento</h5>
+                        <p class="card-text">Añadir un departamento para clasificar áreas de trabajo.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Registrar Aseguradora -->
+        <div class="col-md-4">
+            <a href="{% url 'registrar_salud' %}" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Registrar Aseguradora</h5>
+                        <p class="card-text">Registrar instituciones de salud (Isapre/Fonasa).</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .hover-card {
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+    }
+</style>
+
+{% endblock %}
+

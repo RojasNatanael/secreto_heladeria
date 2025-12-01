@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Editar Empleado{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Editar Empleado: {{ empleado.informacion_personal.nombre }} {{ empleado.informacion_personal.apellido }}</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="row">
+        <!-- Información Personal -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    {{ info_form.as_p }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contacto -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Información de Contacto</h5>
+                </div>
+                <div class="card-body">
+                    {{ contacto_form.as_p }}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Información Laboral -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Información Laboral</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ empleado_form.as_p }}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="{% url 'lista_empleados' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

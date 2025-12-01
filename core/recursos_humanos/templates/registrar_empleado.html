@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Empleado{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h2 class="text-primary mb-4">Registrar Empleado</h2>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Usuario -->
+                <h4 class="text-primary mt-3">Cuenta de Usuario</h4>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        {{ user_form.username.label_tag }} 
+                        {{ user_form.username }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ user_form.password1.label_tag }}
+                        {{ user_form.password1 }}
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        {{ user_form.password2.label_tag }}
+                        {{ user_form.password2 }}
+                    </div>
+                </div>
+
+                <!-- Contacto -->
+                <h4 class="text-primary mt-3">Contacto</h4>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {{ contacto_form.telefono1.label_tag }}
+                        {{ contacto_form.telefono1 }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ contacto_form.telefono2.label_tag }}
+                        {{ contacto_form.telefono2 }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ contacto_form.correo.label_tag }}
+                        {{ contacto_form.correo }}
+                    </div>
+                </div>
+
+                <!-- Información Personal -->
+                <h4 class="text-primary mt-3">Información Personal</h4>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        {{ info_form.nombre.label_tag }}
+                        {{ info_form.nombre }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ info_form.segundo_nombre.label_tag }}
+                        {{ info_form.segundo_nombre }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ info_form.apellido.label_tag }}
+                        {{ info_form.apellido }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ info_form.segundo_apellido.label_tag }}
+                        {{ info_form.segundo_apellido }}
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        {{ info_form.fecha_nacimiento.label_tag }}
+                        {{ info_form.fecha_nacimiento }}
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        {{ info_form.run.label_tag }}
+                        {{ info_form.run }}
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        {{ info_form.estado_civil.label_tag }}
+                        {{ info_form.estado_civil }}
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        {{ info_form.nacionalidad.label_tag }}
+                        {{ info_form.nacionalidad }}
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        {{ info_form.genero.label_tag }}
+                        {{ info_form.genero }}
+                    </div>
+                </div>
+
+                <!-- Empleado -->
+                <h4 class="text-primary mt-3">Empleado</h4>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {{ empleado_form.fecha_ingreso.label_tag }}
+                        {{ empleado_form.fecha_ingreso }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ empleado_form.salario_base.label_tag }}
+                        {{ empleado_form.salario_base }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ empleado_form.contrato.label_tag }}
+                        {{ empleado_form.contrato }}
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        {{ empleado_form.tipo_contrato.label_tag }}
+                        {{ empleado_form.tipo_contrato }}
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        {{ empleado_form.departamento.label_tag }}
+                        {{ empleado_form.departamento }}
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        {{ empleado_form.salud.label_tag }}
+                        {{ empleado_form.salud }}
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        {{ empleado_form.afp.label_tag }}
+                        {{ empleado_form.afp }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mt-3">
+                    Registrar Empleado
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+

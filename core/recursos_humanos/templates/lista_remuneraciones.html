@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Remuneraciones{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Listado de Remuneraciones</h1>
+
+<form method="GET" class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <input type="text" name="search" class="form-control"
+               placeholder="Buscar empleado (nombre, run)"
+               value="{{ search }}">
+    </div>
+
+    <div class="col-md-3">
+        <select name="empleado" class="form-select">
+            <option value="">Empleado</option>
+            {% for e in empleados %}
+                <option value="{{ e.id }}" {% if selected_empleado == e.id|stringformat:"s" %}selected{% endif %}>
+                    {{ e.informacion_personal.nombre }} {{ e.informacion_personal.apellido }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <input type="number" name="min_monto" class="form-control"
+               placeholder="Monto mínimo" value="{{ min_monto }}">
+    </div>
+
+    <div class="col-md-2">
+        <input type="number" name="max_monto" class="form-control"
+               placeholder="Monto máximo" value="{{ max_monto }}">
+    </div>
+
+    <div class="col-md-2">
+        <input type="date" name="fecha" class="form-control" value="{{ selected_fecha }}">
+    </div>
+
+    <div class="col-md-12">
+        <button class="btn btn-primary">Filtrar</button>
+    </div>
+
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th>Empleado</th>
+        <th>RUN</th>
+        <th>Monto</th>
+        <th>Fecha</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for r in remuneraciones %}
+        <tr>
+            <td>
+                {{ r.empleado.informacion_personal.nombre }}
+                {{ r.empleado.informacion_personal.apellido }}
+            </td>
+            <td>{{ r.empleado.informacion_personal.run }}</td>
+            <td>{{ r.monto }}</td>
+            <td>{{ r.fecha }}</td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">
+                No hay remuneraciones registradas (ಥ_ಥ)
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+

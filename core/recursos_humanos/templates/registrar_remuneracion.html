@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Remuneración{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Registrar Remuneración</h2>
+
+    <form method="POST" class="card p-4 shadow-sm">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="id_monto" class="form-label">Monto</label>
+            {{ remuneracion_form.monto }}
+            <small class="form-text text-muted">
+            {{ remuneracion_form.monto.help_text }}
+    </small>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_fecha" class="form-label">Fecha de Pago</label>
+            {{ remuneracion_form.fecha }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_observaciones" class="form-label">Observaciones/Mensaje</label>
+            {{ remuneracion_form.observaciones }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_empleado" class="form-label">Empleado</label>
+            {{ remuneracion_form.empleado }}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Registrar</button>
+    </form>
+</div>
+
+{% endblock %}
