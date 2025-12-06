@@ -9,6 +9,8 @@ from recursos_humanos.lista_empleados import lista_empleados
 from recursos_humanos.editar_empleado import editar_empleado
 from recursos_humanos.lista_remuneraciones import lista_remuneraciones
 from recursos_humanos.lista_asistencia import lista_asistencia
+from recursos_humanos.lista_departamentos import lista_departamentos
+from recursos_humanos.editar_departamento import editar_departamento
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -27,10 +29,12 @@ urlpatterns = [
 
 
     path('empleado/editar/<int:empleado_id>/', editar_empleado, name='editar_empleado'),
+    path('departamentos/editar<int:departamento_id>', editar_departamento, name='editar_departamento'),
 
     path('remuneracion/', lista_remuneraciones, name='lista_remuneraciones'),
-
     path('asistencia/', lista_asistencia, name='lista_asistencia'),
+    path('departamentos', lista_departamentos, name='lista_departamentos'),
+
     path('dashboard/', dashboard, name='dashboard'),
 
 ]

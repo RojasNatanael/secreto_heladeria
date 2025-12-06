@@ -105,6 +105,12 @@ class Asistencia(models.Model):
 
     class Meta:
         db_table = 'cpt_asistencia'
+        constraints = [
+                models.UniqueConstraint(
+                    fields=['empleado', 'fecha'],
+                    name='fecha_asistencia_unica'
+                    )
+                ]
 
 
 class Remuneracion(models.Model):
