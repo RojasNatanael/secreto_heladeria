@@ -1,10 +1,11 @@
 # views.py
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, ProtectedError
 from .models import Empleado, Departamento, Afp, Salud
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import get_object_or_404
 
 
 @login_required
@@ -66,3 +67,44 @@ def lista_empleados(request):
         "selected_salud": salud,
     }
     return render(request, "lista_empleados.html", context)
+
+@permission_required('recursos_humanos.delete_empleado', raise_exception=True)
+def eliminar_empleado(request, empleado_id):
+    empleado = get_object_or_404(Empleado, id=empleado_id)
+    empleado_nombre = f"{empleado.informacion_personal.nombre} {empleado.informacion_personal.apellido}"
+    
+    try:
+        # Verificar manualmente si hay registros relacionados primero
+        # Esto es más informativo y controlado
+        registros_relacionados = []
+        
+        if empleado.asistencias.exists():
+            registros_relacionados.append("asistencias")
+        
+        if empleado.remuneraciones.exists():
+            registros_relacionados.append("remuneraciones")
+        
+        # Agrega más verificaciones según tus modelos relacionados
+        # Por ejemplo, si tienes otros modelos con PROTECT
+        
+        if registros_relacionados:
+            tipos_str = ", ".join(registros_relacionados)
+            messages.error(
+                request, 
+                f'No es posible eliminar al empleado {empleado_nombre} porque tiene registros guardados: {tipos_str}.'
+            )
+        else:
+            empleado.delete()
+            messages.success(request, f'Empleado {empleado_nombre} eliminado correctamente.')
+            
+    except ProtectedError:
+        # Fallback en caso de que Django detecte otras protecciones
+        messages.error(
+            request, 
+            f'No es posible eliminar al empleado {empleado_nombre} porque tiene registros relacionados que lo protegen.'
+        )
+    
+    except Exception as e:
+        messages.error(request, f'Error al eliminar empleado: {str(e)}')
+    
+    return redirect('lista_empleados')

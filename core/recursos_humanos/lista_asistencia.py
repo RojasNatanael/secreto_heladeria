@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Asistencia
+from django.db.models import Q, ProtectedError
 from .forms.asistencia import AsistenciaFilterForm
 from django.contrib.auth.decorators import login_required
 
@@ -36,3 +37,32 @@ def lista_asistencia(request):
         "asistencias": asistencias.order_by("-fecha")
     })
 
+
+@login_required
+def eliminar_asistencia(request, asistencia_id):
+    asistencia = get_object_or_404(Asistencia, id=asistencia_id)
+    
+    try:
+        # Obtener información antes de eliminar
+        empleado_nombre = f"{asistencia.empleado.informacion_personal.nombre} {asistencia.empleado.informacion_personal.apellido}"
+        fecha = asistencia.fecha
+        
+        # Intentar eliminar
+        asistencia.delete()
+        messages.success(request, f'Asistencia del {fecha} para {empleado_nombre} eliminada correctamente.')
+    
+    except ProtectedError:
+        # En caso de que la asistencia esté protegida por otros registros
+        messages.error(
+            request, 
+            'No es posible eliminar la asistencia porque tiene registros relacionados.'
+        )
+    
+    except Exception as e:
+        messages.error(request, f'Error al eliminar asistencia: {str(e)}')
+    
+    # Redirigir manteniendo los parámetros de filtro
+    referer_url = request.META.get('HTTP_REFERER')
+    if referer_url:
+        return redirect(referer_url)
+    return redirect('lista_asistencias')

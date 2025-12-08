@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Empleado, Afp, Salud, Asistencia, InformacionPersonal, Contacto, Departamento, Remuneracion, Marca, Inzumo
+from .models import Empleado, Afp, Salud, Asistencia, InformacionPersonal, Contacto, Departamento, Remuneracion, Marca
 # Register your models here.
 
 admin.site.register(Empleado)
@@ -11,4 +11,3 @@ admin.site.register(Contacto)
 admin.site.register(Departamento)
 admin.site.register(Remuneracion)
 admin.site.register(Marca)
-admin.site.register(Inzumo)

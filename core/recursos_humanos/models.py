@@ -198,12 +198,3 @@ class Marca(models.Model):
         return f"{self.nombre}"
     
 
-class Inzumo(models.Model):
-    nombre = models.CharField(max_length=90)
-    descripcion = models.TextField(max_length=90)
-    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.nombre} - {self.marca}"
-
-

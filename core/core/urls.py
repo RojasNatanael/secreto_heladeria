@@ -1,11 +1,11 @@
 
 from django.contrib import admin
 from django.urls import path
-from recursos_humanos.views import registrar_empleado, registrar_afp, registrar_departamento,registrar_asistencia,registrar_remuneracion,registrar_salud, dashboard, registrar_inzumo
+from recursos_humanos.views import registrar_empleado, registrar_afp, registrar_departamento,registrar_asistencia,registrar_remuneracion,registrar_salud, dashboard
 
 from django.contrib.auth import views as auth_views
 
-from recursos_humanos.lista_empleados import lista_empleados
+from recursos_humanos.lista_empleados import lista_empleados, eliminar_empleado
 from recursos_humanos.editar_empleado import editar_empleado
 from recursos_humanos.exportar_empleados import exportar_empleados
 from recursos_humanos.lista_remuneraciones import lista_remuneraciones
@@ -28,7 +28,6 @@ urlpatterns = [
     path('asistencia/registrar/', registrar_asistencia, name='registrar_asistencia'),
     path('remuneracion/registrar/', registrar_remuneracion, name='registrar_remuneracion'),
     path('salud/registrar/', registrar_salud, name='registrar_salud'),
-    path('inzumo/registrar/', registrar_inzumo, name='registrar_inzumo'),
 
 
     path('empleados/editar/<int:empleado_id>/', editar_empleado, name='editar_empleado'),
@@ -41,6 +40,8 @@ urlpatterns = [
     path('empleados/exportar/', exportar_empleados, name='exportar_empleados'),
     path('asistencia/exportar/', exportar_asistencias, name='exportar_asistencias'),
     path('remuneracion/exportar/', exportar_remuneraciones, name='exportar_remuneraciones'),
+
+    path('empleados/eliminar/<int:empleado_id>/', eliminar_empleado, name='eliminar_empleado'),
 
     path('', dashboard, name='dashboard'),
 

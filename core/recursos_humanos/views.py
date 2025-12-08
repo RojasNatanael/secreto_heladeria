@@ -5,7 +5,6 @@ from .forms.departamento import DepartamentoForm
 from .forms.asistencia import AsistenciaForm
 from .forms.remuneracion import RemuneracionForm
 from .forms.salud import SaludForm
-from .forms.inzumo import InzumoForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 
@@ -105,19 +104,6 @@ def registrar_salud(request):
             form = SaludForm()
         
     return render(request, "registrar_salud.html", {"salud_form":form})
-
-@permission_required('recursos_humanos.add_inzumo',raise_exception=True)
-def registrar_inzumo(request):
-    if request.method == "POST":
-        form = InzumoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Inzumo registrado correctamente.")
-            return redirect("registrar_inzumo")
-    else:
-        form = InzumoForm()
-    return render(request, "registrar_inzumo.html", {"inzumo_form":form})
-
 
 @login_required
 def dashboard(request):
