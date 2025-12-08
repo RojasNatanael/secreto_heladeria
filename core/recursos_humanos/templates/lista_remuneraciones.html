@@ -2,9 +2,13 @@
 {% block title %}Remuneraciones{% endblock %}
 
 {% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="m-0">Remuneraciones</h1>
 
-<h1 class="mb-4">Listado de Remuneraciones</h1>
-
+    <a href="{% url 'registrar_remuneracion' %}" class="btn btn-primary w-25">
+        Registrar remuneracion
+    </a>
+    </div>
 <form method="GET" class="row g-3 mb-4">
 
     <div class="col-md-3">
@@ -13,7 +17,7 @@
                value="{{ search }}">
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select name="empleado" class="form-select">
             <option value="">Empleado</option>
             {% for e in empleados %}
@@ -73,6 +77,9 @@
     {% endfor %}
     </tbody>
 </table>
+<a href="{% url 'exportar_remuneraciones' %}?{{ request.GET.urlencode }}" class="btn btn-success mb-3">
+    Generar reporte
+</a>
 
 {% endblock %}
 

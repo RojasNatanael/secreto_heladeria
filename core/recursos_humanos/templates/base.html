@@ -57,7 +57,7 @@
 </head>
 
 <body>
-    <!-- Navigation Bar -->
+
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dashboard' %}">
@@ -70,6 +70,7 @@
             
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
 		<li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard' %}">
                             <i class="bi bi-journal-text"></i> Administrar
@@ -81,7 +82,6 @@
                         </a>
                     </li>
                     
-                    <!-- Navigation links - to be filled in later -->
                    
                     <li class="nav-item">
 			    <a class="nav-link" href="{% url 'lista_remuneraciones' %}">
@@ -93,35 +93,30 @@
 			    <a class="nav-link" href="{% url 'lista_asistencia' %}">
                             <i class="bi bi-calendar-week"></i> Asistencias
                         </a>
+                                            <li class="nav-item">
+			    <a class="nav-link" href="{% url 'lista_departamentos' %}">
+                            <i class="bi bi-briefcase"></i> Departamentos
+                        </a>
+                    </li>
+
 		</ul>
-                
-                <!-- User section -->
+        {% endif %}
                 <div class="d-flex align-items-center">
 			{% if user.is_authenticated %}
-		    <div class="dropdown">
-			<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-			    <i class="bi bi-person"></i> Log Out
-			</a>
-			<ul class="dropdown-menu dropdown-menu-end">
-			    <li>
 				<form action="{% url 'logout' %}" method="post">
 				    {% csrf_token %}
-				    <button type="submit" class="dropdown-item">
+				    <button type="submit" class="btn text-white">
 					Cerrar Sesión
 				    </button>
 				</form>
-			    </li>
-			</ul>
-		    </div>
+                
 		    {% endif %}
 		</div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container mt-4">
-        <!-- Messages/Alerts -->
         {% if messages %}
         <div class="messages mb-4">
             {% for message in messages %}
@@ -133,12 +128,10 @@
         </div>
         {% endif %}
         
-        <!-- Main Content Block -->
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Footer -->
     <footer class="footer text-white mt-5 py-3">
         <div class="container">
             <div class="row">
